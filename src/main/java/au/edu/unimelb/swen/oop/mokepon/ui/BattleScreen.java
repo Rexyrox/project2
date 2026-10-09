@@ -3,6 +3,7 @@ package au.edu.unimelb.swen.oop.mokepon.ui;
 import au.edu.unimelb.swen.oop.mokepon.data.MokeponSpec;
 import au.edu.unimelb.swen.oop.mokepon.item.Inventory;
 import au.edu.unimelb.swen.oop.mokepon.item.ItemType;
+import au.edu.unimelb.swen.oop.mokepon.model.BattleState;
 import au.edu.unimelb.swen.oop.mokepon.skill.Skill;
 import au.edu.unimelb.swen.oop.mokepon.model.Battle;
 import au.edu.unimelb.swen.oop.mokepon.model.Battler;
@@ -61,6 +62,7 @@ public class BattleScreen extends Pane {
 
     private final Assets assets;
     private final Battle battle;
+    private final GameActions actions;
 
     private final StatBar playerHp = new StatBar(BAR_WIDTH, BAR_HEIGHT, Color.LIMEGREEN, true);
     private final StatBar playerEnergy = new StatBar(BAR_WIDTH, BAR_HEIGHT, Color.ROYALBLUE, true);
@@ -74,9 +76,11 @@ public class BattleScreen extends Pane {
     private ScrollPanel playerScroll;
     private ScrollPanel enemyScroll;
 
-    public BattleScreen(Assets assets, Battle battle, Map<ItemType, String> itemImages) {
+    public BattleScreen(Assets assets, Battle battle, Map<ItemType, String> itemImages,
+                        GameActions actions) {
         this.assets = assets;
         this.battle = battle;
+        this.actions = actions;
 
         getChildren().addAll(playerPanel(), enemyPanel(), battleLog(), itemBar(itemImages));
         listenForHotkeys();
@@ -216,6 +220,7 @@ public class BattleScreen extends Pane {
             button.setOnAction(event -> {
                 battle.playerUsesItem(type);
                 refresh();
+                showResultIfOver();
             });
             itemButtons.add(button);
             bar.getChildren().add(button);
@@ -234,6 +239,7 @@ public class BattleScreen extends Pane {
         action.setOnAction(event -> {
             battle.playerUses(skill);
             refresh();
+            showResultIfOver();
         });
         actionButtons.add(action);
         return action;
@@ -261,6 +267,19 @@ public class BattleScreen extends Pane {
         log.setPrefSize(LOG_WIDTH, LOG_HEIGHT);
         log.relocate(LOG_X, LOG_Y);
         return log;
+    }
+
+    private void showResultIfOver() {
+        if (battle.state() == BattleState.PLAYER_WON) {
+            new Modal(assets, "You Win")
+                    .withButton("Back to it!", actions::battleWon)
+                    .showOver(this);
+        } else if (battle.state() == BattleState.PLAYER_LOST) {
+            new Modal(assets, "Game Over")
+                    .withButton("Return to Main Menu", actions::mainMenu)
+                    .withButton("Quit", actions::exit)
+                    .showOver(this);
+        }
     }
 
 }

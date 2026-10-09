@@ -1,6 +1,7 @@
 package au.edu.unimelb.swen.oop.mokepon.model;
 
 import au.edu.unimelb.swen.oop.mokepon.data.MokeponSpec;
+import au.edu.unimelb.swen.oop.mokepon.data.Terrain;
 import au.edu.unimelb.swen.oop.mokepon.item.Inventory;
 import au.edu.unimelb.swen.oop.mokepon.item.ItemType;
 import au.edu.unimelb.swen.oop.mokepon.skill.Randomiser;
@@ -19,14 +20,13 @@ public class Battle {
 
     private BattleState state = BattleState.IN_PROGRESS;
 
-    public Battle(MokeponSpec playerSpec, MokeponSpec enemySpec, Inventory inventory,
-                 Randomiser random) {
-        this.player = new Battler(playerSpec, 1.0);
-        this.enemy = new Battler(enemySpec, 1.0);
+    public Battle(MokeponSpec playerSpec, MokeponSpec enemySpec, Terrain terrain,
+                   Inventory inventory, Randomiser random) {
+        this.player = new Battler(playerSpec, multiplierFor(playerSpec, terrain));
+        this.enemy = new Battler(enemySpec, multiplierFor(enemySpec, terrain));
         this.inventory = inventory;
         this.random = random;
         log.battleBegan(player.name(), enemy.name());
-
     }
 
     public Battler player() {
@@ -122,6 +122,10 @@ public class Battle {
         }
         // Relies on every Mokepon having a free or energy-recovering skill, so this is never empty.
         return affordable.get(random.nextInt(0, affordable.size()));
+    }
+
+    private static double multiplierFor(MokeponSpec spec, Terrain terrain) {
+        return spec.type().effectOn(terrain).statMultiplier();
     }
 
 

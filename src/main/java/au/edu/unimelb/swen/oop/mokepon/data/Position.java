@@ -7,4 +7,8 @@ public record Position(int x, int y) {
         String[] parts = text.split(",");
         return new Position(Integer.parseInt(parts[0].trim()), Integer.parseInt(parts[1].trim()));
     }
+
+    public Position moved(Direction direction) {
+        return new Position(x + direction.dx(), y + direction.dy());
+    }
 }

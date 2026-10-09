@@ -2,8 +2,11 @@ package au.edu.unimelb.swen.oop.mokepon;
 
 import au.edu.unimelb.swen.oop.mokepon.data.GameData;
 import au.edu.unimelb.swen.oop.mokepon.data.MokeponSpec;
+import au.edu.unimelb.swen.oop.mokepon.data.Terrain;
 import au.edu.unimelb.swen.oop.mokepon.item.Inventory;
 import au.edu.unimelb.swen.oop.mokepon.model.Battle;
+import au.edu.unimelb.swen.oop.mokepon.model.Encounter;
+import au.edu.unimelb.swen.oop.mokepon.model.GameSession;
 import au.edu.unimelb.swen.oop.mokepon.skill.DefaultRandomiserSource;
 import au.edu.unimelb.swen.oop.mokepon.skill.Randomiser;
 import au.edu.unimelb.swen.oop.mokepon.ui.*;
@@ -31,11 +34,13 @@ public class GameWindow extends Stage implements GameActions {
 
     private final Assets assets;
     private final GameData data;
-    private final StackPane content = new StackPane();
-    private Inventory inventory = new Inventory();
     private final Randomiser randomiser = new DefaultRandomiserSource();
+    private final StackPane content = new StackPane();
     private final ObjectProperty<ScreenState> screenState =
             new SimpleObjectProperty<>(ScreenState.SELECT);
+
+    private GameSession session;
+    private Encounter currentEncounter;
 
     private MokeponSpec playerMokepon;
     private MokeponSpec enemyMokepon;
@@ -61,29 +66,37 @@ public class GameWindow extends Stage implements GameActions {
         showSelectScreen();
     }
 
-    // Picks a random enemy independently of the player's choice, then enters the Battle Screen.
     @Override
     public void chooseMokepon(MokeponSpec player) {
-        playerMokepon = player;
-        enemyMokepon = data.mokepon().get(randomiser.nextInt(0, data.mokepon().size()));
-        showBattleScreen();
+        session = new GameSession(player, data, randomiser);
+        showOverworldScreen("");
     }
 
-    // Clears the current selection and returns to the Select Screen.
     @Override
-    public void reset() {
-        playerMokepon = null;
-        enemyMokepon = null;
-        inventory = new Inventory();
+    public void fight(Encounter encounter) {
+        currentEncounter = encounter;
+        Battle battle = new Battle(session.playerMokepon(), encounter.enemy(),
+                encounter.terrain(), session.inventory(), randomiser);
+        showScreen(new BattleScreen(assets, battle, data.itemImages(), this), ScreenState.BATTLE);
+    }
+
+    @Override
+    public void runAway() {
+        session.retreat();
+        showOverworldScreen("");
+    }
+
+    @Override
+    public void battleWon() {
+        session.defeated(currentEncounter.marker());
+        showOverworldScreen("You beat the enemy " + currentEncounter.enemy().name() + "!");
+    }
+
+    @Override
+    public void mainMenu() {
+        session = null;
+        currentEncounter = null;
         showSelectScreen();
-    }
-
-    @Override
-    public void restartBattle() {
-        // Rebuilding the screen (same specs) is what resets hp/energy/fainted state and the log.
-        if (playerMokepon != null) {
-            showBattleScreen();
-        }
     }
 
     @Override
@@ -92,12 +105,13 @@ public class GameWindow extends Stage implements GameActions {
     }
 
     private void showSelectScreen() {
-        showScreen(new SelectScreen(assets, data.mokepon(), this), ScreenState.SELECT);
+        showScreen(new SelectScreen(assets, data.mokepon(), data.typeImages(), this),
+                ScreenState.SELECT);
     }
 
-    private void showBattleScreen() {
-        Battle battle = new Battle(playerMokepon, enemyMokepon, inventory, randomiser);
-        showScreen(new BattleScreen(assets, battle, data.itemImages()), ScreenState.BATTLE);
+    private void showOverworldScreen(String statusMessage) {
+        showScreen(new OverworldScreen(assets, data.map(), session, this, statusMessage),
+                ScreenState.OVERWORLD);
     }
 
     // Swaps in a new screen at the fixed game size and records which screen is now showing.

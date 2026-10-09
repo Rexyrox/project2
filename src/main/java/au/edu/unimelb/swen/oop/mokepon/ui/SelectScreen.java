@@ -2,12 +2,14 @@ package au.edu.unimelb.swen.oop.mokepon.ui;
 
 import au.edu.unimelb.swen.oop.mokepon.data.MokeponSpec;
 
+import au.edu.unimelb.swen.oop.mokepon.data.MokeponType;
 import au.edu.unimelb.swen.oop.mokepon.skill.Skill;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
@@ -20,6 +22,7 @@ import javafx.scene.text.TextAlignment;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 // The Mokepon Select Screen: a list of Mokepon to choose from, a detail panel for the current
@@ -28,7 +31,7 @@ public class SelectScreen extends Pane {
 
     private static final String NO_SELECTION_NAME = "Select a Mokepon";
     private static final String[] STAT_NAMES = {
-            "HP:", "Energy:", "Strength:", "Accuracy:", "Defence:", "Dodge:", "Skills:"
+            "HP:", "Energy:", "Strength:", "Accuracy:", "Defence:", "Dodge:", "Skills:", "Type:"
     };
 
     private static final double HEADING_FONT_SIZE = 34;
@@ -40,6 +43,8 @@ public class SelectScreen extends Pane {
     private static final double LIST_X = 55;
     private static final double LIST_Y = 90;
     private static final double LIST_ENTRY_WIDTH = 300;
+    private static final double LIST_HEIGHT = 620;
+    private static final double LIST_SCROLLBAR_ALLOWANCE = 20;
 
     private static final double PANEL_X = 400;
     private static final double PANEL_Y = 40;
@@ -61,6 +66,8 @@ public class SelectScreen extends Pane {
     private static final double CHOOSE_BUTTON_WIDTH = 160;
     private static final double CHOOSE_GAP = 20;
 
+    private static final double TYPE_ICON_SIZE = 24;
+
     private final Assets assets;
     private final GameActions actions;
     private final ToggleGroup selection = new ToggleGroup();
@@ -68,8 +75,13 @@ public class SelectScreen extends Pane {
     private final Label name = new Label(NO_SELECTION_NAME);
     private final List<Label> statValues = new ArrayList<>();
 
-    public SelectScreen(Assets assets, List<MokeponSpec> specs, GameActions actions) {
+    private final Map<MokeponType, String> typeImages;
+    private final ImageView typeIcon = new ImageView();
+
+    public SelectScreen(Assets assets, List<MokeponSpec> specs,
+                        Map<MokeponType, String> typeImages, GameActions actions) {
         this.assets = assets;
+        this.typeImages = typeImages;
         this.actions = actions;
         getChildren().addAll(heading(), mokeponList(specs), detailPanel());
         selection.selectedToggleProperty().addListener((property, previous, current) -> showSelection());
@@ -83,10 +95,15 @@ public class SelectScreen extends Pane {
     }
 
     // Refreshes the portrait, name and stats panel to match the current selection (or lack of one).
-    private void showSelection () {
+    private void showSelection() {
         MokeponSpec spec = selected();
         portrait.setImage(spec == null ? null : assets.image(spec.imagePath()));
         name.setText(spec == null ? NO_SELECTION_NAME : spec.name());
+
+        // NORMAL has no image (spec 3.6.3), so typeImages.get returns null for it.
+        String typeImagePath = spec == null ? null : typeImages.get(spec.type());
+        typeIcon.setImage(typeImagePath == null ? null : assets.image(typeImagePath));
+        typeIcon.setManaged(typeImagePath != null);
 
         String[] values = spec == null ? new String[STAT_NAMES.length] : statisticsOf(spec);
         for (int row = 0; row < statValues.size(); row++) {
@@ -103,7 +120,8 @@ public class SelectScreen extends Pane {
                 String.valueOf(spec.accuracy()),
                 String.valueOf(spec.defence()),
                 String.valueOf(spec.dodge()),
-                spec.skills().stream().map(Skill::name).collect(Collectors.joining(", "))
+                spec.skills().stream().map(Skill::name).collect(Collectors.joining(", ")),
+                spec.type().name()
         };
     }
 
@@ -118,13 +136,20 @@ public class SelectScreen extends Pane {
     }
 
     // The selectable list of Mokepon names, one toggle button per spec.
-    private VBox mokeponList(List<MokeponSpec> specs) {
+    private ScrollPane mokeponList(List<MokeponSpec> specs) {
         VBox list = new VBox(LIST_SPACING);
         for (MokeponSpec spec : specs) {
             list.getChildren().add(listEntry(spec));
         }
-        list.relocate(LIST_X, LIST_Y);
-        return list;
+
+        ScrollPane scroll = new ScrollPane(list);
+        scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scroll.setPrefViewportWidth(LIST_ENTRY_WIDTH + LIST_SCROLLBAR_ALLOWANCE);
+        scroll.setPrefViewportHeight(LIST_HEIGHT);
+        scroll.getStyleClass().add("mokepon-list");
+        scroll.relocate(LIST_X, LIST_Y);
+        return scroll;
     }
 
     // One list entry; toggling it (via the shared group) drives showSelection().
@@ -149,6 +174,15 @@ public class SelectScreen extends Pane {
         name.setTextFill(Color.BLACK);
         name.setEffect(whiteOutline());
 
+        typeIcon.setFitWidth(TYPE_ICON_SIZE);
+        typeIcon.setFitHeight(TYPE_ICON_SIZE);
+        typeIcon.setPreserveRatio(true);
+        typeIcon.setManaged(false);
+
+        // The type icon sits after the name heading (spec 3.6.2), so they share a row.
+        HBox nameRow = new HBox(PANEL_SPACING, name, typeIcon);
+        nameRow.setAlignment(Pos.CENTER);
+
         Region spacer = new Region();
         spacer.setMinWidth(CHOOSE_BUTTON_WIDTH);
 
@@ -156,7 +190,7 @@ public class SelectScreen extends Pane {
         scrollRow.setAlignment(Pos.CENTER);
 
         VBox panel = new VBox(
-                PANEL_SPACING, new StackPane(portraitBackground(), portrait), name, scrollRow);
+                PANEL_SPACING, new StackPane(portraitBackground(), portrait), nameRow, scrollRow);
         panel.setAlignment(Pos.CENTER);
         panel.relocate(PANEL_X, PANEL_Y);
         return panel;

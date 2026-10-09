@@ -82,3 +82,38 @@
 .item-button:pressed {
     -fx-background-color: rgba(211, 211, 211, 0.75);
 }
+
+.mokepon-list,
+.mokepon-list > .viewport {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-padding: 0;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.modal-dialog {
+    -fx-background-color: white;
+    -fx-border-color: black;
+    -fx-border-width: 2;
+}
+
+.move-button {
+    -fx-background-color: rgba(211, 211, 211, 0.5);
+    -fx-background-radius: 50;
+    -fx-background-insets: 0;
+    -fx-padding: 8;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.move-button:pressed {
+    -fx-background-color: rgba(211, 211, 211, 0.75);
+}
+
+.status-bar {
+    -fx-background-color: white;
+    -fx-border-color: black;
+    -fx-border-width: 1;
+    -fx-padding: 0 8 0 8;
+}

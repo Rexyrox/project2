@@ -19,4 +19,9 @@ public record MapData(
     public Terrain terrainAt(Position position) {
         return tiles.get(position.y()).get(position.x());
     }
+
+    public boolean contains(Position position) {
+        return position.y() >= 0 && position.y() < tiles.size()
+                && position.x() >= 0 && position.x() < tiles.get(position.y()).size();
+    }
 }

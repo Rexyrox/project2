@@ -12,22 +12,21 @@ import javafx.scene.input.KeyCombination;
 // The "Game" menu: Reset and Restart Battle (only enabled during a battle) and Exit.
 public class GameMenuBar extends MenuBar {
 
-    public GameMenuBar(GameActions actions,ReadOnlyObjectProperty<ScreenState> screenState) {
-        MenuItem reset = new MenuItem("Reset");
-        reset.setAccelerator(new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN));
-        reset.setOnAction(event -> actions.reset());
+    public GameMenuBar(GameActions actions, ReadOnlyObjectProperty<ScreenState> screenState) {
+        MenuItem runAway = new MenuItem("Run away");
+        runAway.setAccelerator(new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN));
+        runAway.setOnAction(event -> actions.runAway());
+        runAway.disableProperty().bind(screenState.isNotEqualTo(ScreenState.BATTLE));
 
-        MenuItem restartBattle = new MenuItem("Restart Battle");
-        restartBattle.setAccelerator(new KeyCodeCombination(KeyCode.R));
-        restartBattle.setOnAction(event -> actions.restartBattle());
+        MenuItem mainMenu = new MenuItem("Main menu");
+        mainMenu.setAccelerator(new KeyCodeCombination(KeyCode.B, KeyCombination.CONTROL_DOWN));
+        mainMenu.setOnAction(event -> actions.mainMenu());
+        mainMenu.disableProperty().bind(screenState.isEqualTo(ScreenState.SELECT));
 
         MenuItem exit = new MenuItem("Exit");
+        exit.setAccelerator(new KeyCodeCombination(KeyCode.F4, KeyCombination.ALT_DOWN));
         exit.setOnAction(event -> actions.exit());
 
-        reset.disableProperty().bind(screenState.isNotEqualTo(ScreenState.BATTLE));
-        restartBattle.disableProperty().bind(screenState.isNotEqualTo(ScreenState.BATTLE));
-
-
-        getMenus().add(new Menu("Game", null, reset, restartBattle, exit));
+        getMenus().add(new Menu("Game", null, runAway, mainMenu, exit));
     }
 }

@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /*
@@ -18,6 +20,7 @@ public class Assets {
     private static final String HEADING_FONT_PATH = "assets/GrenzeGotisch-Black.ttf";
 
     private final byte[] headingFontBytes;
+    private final Map<String, Image> images = new HashMap<>();
 
     public Assets() {
         this.headingFontBytes = readAllBytes(HEADING_FONT_PATH);
@@ -34,9 +37,14 @@ public class Assets {
 
     // Loads an image from a path relative to cwd, failing fast if it can't be read.
     public Image image(String relativePath) {
+        return images.computeIfAbsent(relativePath, Assets::loadImage);
+    }
+
+    private static Image loadImage(String relativePath) {
         Image image = new Image(Path.of(relativePath).toUri().toString());
         if (image.isError()) {
-            throw new IllegalStateException("Could not load image " + relativePath, image.getException());
+            throw new IllegalStateException(
+                    "Could not load image " + relativePath, image.getException());
         }
         return image;
     }
