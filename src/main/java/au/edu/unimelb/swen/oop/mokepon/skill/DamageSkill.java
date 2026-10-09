@@ -2,36 +2,32 @@ package au.edu.unimelb.swen.oop.mokepon.skill;
 
 // Shared hit/damage math for skills that attack the target (Bite, Tackle); subclasses just supply
 // their multiplier, name and energy cost.
-public abstract class DamageSkill implements Skill {
+public abstract class DamageSkill extends TargetedSkill {
     private static final int DAMAGE_NUMERATOR = 50;
 
-    private final int strengthMultiplier;
+    private final double strengthMultiplier;
 
-    protected DamageSkill(int strengthMultiplier) {
+    protected DamageSkill(double strengthMultiplier) {
         this.strengthMultiplier = strengthMultiplier;
     }
 
-    // Rolls to hit, then applies damage to the target if it does.
+    // Only reached after TargetedSkill's hit roll has passed.
     @Override
-    public SkillOutcome use(Combatant user, Combatant target, Randomiser random) {
-        // Hits only if the chance is strictly greater than the roll, so an equal roll misses.
-        if (hitChance(user.currentAccuracy(), target.currentDodge()) <= random.nextFraction()) {
-            return new SkillOutcome.Missed();
-        }
-        int damage = damageAgainst(user.currentStrength(), target.currentDefence());
-        target.takeDamage(damage);
-        return new SkillOutcome.Hit(target.name(), damage);
+    protected SkillOutcome onHit(Combatant user, Combatant target, Randomiser random) {
+        return new SkillOutcome.Hit(target.name(), dealDamage(user, target));
     }
 
-    // Probability of hitting: accuracy^2 / (accuracy^2 + dodge^2).
-    private static double hitChance(int accuracy, int dodge) {
-        double accuracySquared = (double) accuracy * accuracy;
-        double dodgeSquared = (double) dodge * dodge;
-        return accuracySquared / (accuracySquared + dodgeSquared);
+    // Applies this skill's damage to the target and returns it, for subclasses that add effects.
+    protected int dealDamage(Combatant user, Combatant target) {
+        int damage = damage(strengthMultiplier, user, target);
+        target.takeDamage(damage);
+        return damage;
     }
 
     // Divided last so the result is truncated once, rather than once per operand.
-    private int damageAgainst(int strength, int defence) {
-        return strengthMultiplier * strength * DAMAGE_NUMERATOR / defence;
+    public static int damage(double strengthMultiplier, Combatant attacker, Combatant defender) {
+        double strength = attacker.current(Stat.STRENGTH) * strengthMultiplier;
+        double raw = strength * DAMAGE_NUMERATOR / defender.current(Stat.DEFENCE);
+        return (int) (raw * attacker.damageMultiplier());
     }
 }

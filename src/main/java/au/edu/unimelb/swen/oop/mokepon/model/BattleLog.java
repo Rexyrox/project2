@@ -1,6 +1,9 @@
 package au.edu.unimelb.swen.oop.mokepon.model;
 
+import au.edu.unimelb.swen.oop.mokepon.skill.EffectEvent;
 import au.edu.unimelb.swen.oop.mokepon.skill.SkillOutcome;
+
+import java.util.List;
 
 /** Every message shown in the battle log, so that wording and spacing live in one place. */
 public class BattleLog {
@@ -26,13 +29,20 @@ public class BattleLog {
     public void playerUsed(String mokeponName, String skillName, SkillOutcome outcome) {
         append("");
         append("Player's " + mokeponName + " used " + skillName + "!");
-        append("\t" + describe(outcome));
+        appendIndented(describe(outcome));
     }
 
     // Enemy turn: the skill-used line followed directly by a tab-indented outcome.
     public void enemyUsed(String mokeponName, String skillName, SkillOutcome outcome) {
         append("Enemy " + mokeponName + " used " + skillName + "!");
-        append("\t" + describe(outcome));
+        appendIndented(describe(outcome));
+    }
+
+    // Lingering effect messages from the end of a round
+    public void effectEvents(List<EffectEvent> events) {
+        for (EffectEvent event : events) {
+            appendIndented(List.of(describe(event)));
+        }
     }
 
     public void enemyFainted(String mokeponName) {
@@ -52,13 +62,31 @@ public class BattleLog {
     }
 
     // Turns a SkillOutcome into the exact line of text the spec requires for it.
-    private static String describe(SkillOutcome outcome) {
+    private static List<String> describe(SkillOutcome outcome) {
         return switch (outcome) {
-            case SkillOutcome.Missed ignored -> "But they missed.";
-            case SkillOutcome.Hit hit -> "Hit " + hit.targetName() + " for " + hit.damage() + " damage!";
-            case SkillOutcome.DefenceRaised raised ->
-                    "They raised their defence by " + raised.points() + " points!";
-            case SkillOutcome.Rested rested -> RESTING_REMARKS[rested.remarkIndex()];
+            case SkillOutcome.Missed ignored -> List.of("But they missed.");
+            case SkillOutcome.Hit hit -> List.of(
+                    "Hit " + hit.targetName() + " for " + hit.damage() + " damage!");
+            case SkillOutcome.Rested rested -> List.of(RESTING_REMARKS[rested.remarkIndex()]);
+            case SkillOutcome.StatRaised raised -> List.of(
+                    "They raised their " + raised.stat().displayName()
+                            + " by " + raised.points() + " points!");
+            case SkillOutcome.HitAndBleeding hit -> List.of(
+                    "Hit " + hit.targetName() + " for " + hit.damage()
+                            + " damage! They started bleeding!");
+            case SkillOutcome.StunApplied stun -> List.of(
+                    stun.targetName() + " was stunned! Their damage is halved for 3 turns.");
+            case SkillOutcome.BlindApplied blind -> List.of(
+                    "Pocket sand blinded " + blind.targetName() + "!",
+                    "Their targeted skills may miss for 3 turns.");
+        };
+    }
+
+    private static String describe(EffectEvent event) {
+        return switch (event) {
+            case EffectEvent.BleedDamage bleed ->
+                    bleed.targetName() + " took " + bleed.damage() + " bleeding damage!";
+            case EffectEvent.BleedingStopped ignored -> "The bleeding stopped.";
         };
     }
 
@@ -68,5 +96,11 @@ public class BattleLog {
             entries.append(System.lineSeparator());
         }
         entries.append(line);
+    }
+
+    private void appendIndented(List<String> lines) {
+        for (String line : lines) {
+            append("\t" + line);
+        }
     }
 }

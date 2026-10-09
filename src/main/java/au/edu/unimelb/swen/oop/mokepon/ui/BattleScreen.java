@@ -5,6 +5,7 @@ import au.edu.unimelb.swen.oop.mokepon.skill.Skill;
 import au.edu.unimelb.swen.oop.mokepon.model.Battle;
 import au.edu.unimelb.swen.oop.mokepon.model.Battler;
 import au.edu.unimelb.swen.oop.mokepon.skill.DefaultRandomiserSource;
+import au.edu.unimelb.swen.oop.mokepon.skill.Stat;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -82,10 +83,10 @@ public class BattleScreen extends Pane {
         Battler player = battle.player();
         Battler enemy = battle.enemy();
 
-        playerHp.setValue(player.currentHp(), player.spec().maxHp());
-        playerEnergy.setValue(player.currentEnergy(), player.spec().maxEnergy());
-        enemyHp.setValue(enemy.currentHp(), enemy.spec().maxHp());
-        enemyEnergy.setValue(enemy.currentEnergy(), enemy.spec().maxEnergy());
+        playerHp.setValue(player.currentHp(), player.maxHp());
+        playerEnergy.setValue(player.currentEnergy(), player.maxEnergy());
+        enemyHp.setValue(enemy.currentHp(), enemy.maxHp());
+        enemyEnergy.setValue(enemy.currentEnergy(), enemy.maxEnergy());
 
         List<Skill> skills = player.spec().skills();
         for (int index = 0; index < actionButtons.size(); index++) {
@@ -99,6 +100,7 @@ public class BattleScreen extends Pane {
         log.positionCaret(log.getLength());
         log.setScrollTop(Double.MAX_VALUE);
     }
+
 
     // Fires the action button matching a 1-4 digit key press, if it isn't disabled.
     private void useHotkey(KeyEvent event) {

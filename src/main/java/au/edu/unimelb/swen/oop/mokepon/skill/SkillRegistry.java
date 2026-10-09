@@ -11,8 +11,14 @@ public final class SkillRegistry {
     public SkillRegistry() {
         register(new Bite());
         register(new Tackle());
-        register(new Bunker());
         register(new Wait());
+        register(new Lance());
+        register(new Stun());
+        register(new PocketSand());
+        register(new RaiseStatSkill("Bunker", Stat.DEFENCE));
+        register(new RaiseStatSkill("Aim", Stat.ACCURACY));
+        register(new RaiseStatSkill("Swole", Stat.STRENGTH));
+        register(new RaiseStatSkill("Nimble", Stat.DODGE));
     }
 
     // Looks up a skill by its exact name; throws if mokepon.game references one that doesn't exist.

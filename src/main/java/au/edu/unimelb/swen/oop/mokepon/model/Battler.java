@@ -1,27 +1,38 @@
 package au.edu.unimelb.swen.oop.mokepon.model;
 
 import au.edu.unimelb.swen.oop.mokepon.data.MokeponSpec;
-import au.edu.unimelb.swen.oop.mokepon.model.Battle;
 import au.edu.unimelb.swen.oop.mokepon.skill.Combatant;
+import au.edu.unimelb.swen.oop.mokepon.skill.EffectEvent;
 import au.edu.unimelb.swen.oop.mokepon.skill.Skill;
+import au.edu.unimelb.swen.oop.mokepon.skill.Stat;
+import au.edu.unimelb.swen.oop.mokepon.skill.StatusEffect;
 
-// One Mokepon's mutable state during a Battle: hp/energy/defence layered over its fixed spec.
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+
+// One Mokepon's mutable state during a Battle: hp/energy/defence/accuracy/dodge/strength
+// layered over its fixed spec.
 public class Battler implements Combatant {
-
-    private static final int MAXIMUM_DEFENCE = 100;
 
     private final MokeponSpec spec;
 
+    private final Map<Stat, Integer> stats = new EnumMap<>(Stat.class);
+    private final List<StatusEffect> effects = new ArrayList<>();
     private int currentHp;
     private int currentEnergy;
-    private int currentDefence;
 
-    public Battler(MokeponSpec spec) {
+    public Battler(MokeponSpec spec, double terrainMultiplier) {
         this.spec = spec;
-        this.currentHp = spec.maxHp();
-        this.currentEnergy = spec.maxEnergy();
-        this.currentDefence = spec.defence();
+        for (Stat stat : Stat.values()) {
+            int adjusted = (int) Math.round(spec.base(stat) * terrainMultiplier);
+            stats.put(stat, Math.min(adjusted, stat.maximum()));
+        }
+        currentHp = maxHp();
+        currentEnergy = maxEnergy();
     }
+
     public MokeponSpec spec() {
         return spec;
     }
@@ -39,6 +50,14 @@ public class Battler implements Combatant {
         return currentEnergy;
     }
 
+    public int maxHp() {
+        return stats.get(Stat.HP);
+    }
+
+    public int maxEnergy() {
+        return stats.get(Stat.ENERGY);
+    }
+
     public boolean hasFainted() {
         return currentHp == 0;
     }
@@ -50,7 +69,7 @@ public class Battler implements Combatant {
 
     public void payEnergyCost(int cost) {
         // Cost can be negative (e.g. Wait recovers energy), so clamp both ends.
-        currentEnergy = clamp(currentEnergy - cost, 0, spec.maxEnergy());
+        currentEnergy = clamp(currentEnergy - cost, 0, maxEnergy());
     }
 
     @Override
@@ -59,31 +78,51 @@ public class Battler implements Combatant {
     }
 
     @Override
-    public int raiseDefence(int points) {
-        int gained = Math.min(points, MAXIMUM_DEFENCE - currentDefence);
-        currentDefence += gained;
-        // Return the amount actually applied (not the raw roll) so the log reports it correctly.
+    public int current(Stat stat) {
+        return stats.get(stat);
+    }
+
+    @Override
+    public int raise(Stat stat, int points) {
+        int current = stats.get(stat);
+        int gained = Math.min(points, stat.maximum() - current);
+        stats.put(stat, current + gained);
         return gained;
     }
 
     @Override
-    public int currentStrength() {
-        return spec.strength();
+    public void addEffect(StatusEffect effect) {
+        effects.removeIf(existing -> existing.getClass() == effect.getClass());
+        effects.add(effect);
     }
 
     @Override
-    public int currentAccuracy() {
-        return spec.accuracy();
+    public boolean isBlinded() {
+        for (StatusEffect effect : effects) {
+            if (effect.blinds()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
-    public int currentDefence() {
-        return currentDefence;
+    public double damageMultiplier() {
+        double multiplier = 1.0;
+        for (StatusEffect effect : effects) {
+            multiplier *= effect.damageMultiplier();
+        }
+        return multiplier;
     }
 
-    @Override
-    public int currentDodge() {
-        return spec.dodge();
+    // Ticks every effect once, then drops any that have run out.
+    public List<EffectEvent> endOfRound() {
+        List<EffectEvent> events = new ArrayList<>();
+        for (StatusEffect effect : effects) {
+            events.addAll(effect.endOfRound(this));
+        }
+        effects.removeIf(StatusEffect::isFinished);
+        return events;
     }
 
     private static int clamp(int value, int lowest, int highest) {

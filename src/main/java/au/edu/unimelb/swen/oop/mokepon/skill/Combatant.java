@@ -5,18 +5,18 @@ public interface Combatant {
 
     String name();
 
-    int currentStrength();
+    int current(Stat stat);
 
-    int currentAccuracy();
-
-    int currentDefence();
-
-    int currentDodge();
+    // Raises a stat by up to points (capped at the maximum); returns the amount actually gained.
+    int raise(Stat stat, int points);
 
     // Reduces hp by amount, clamped so it never drops below 0.
     void takeDamage(int amount);
 
-    // Raises defence by up to points (capped at the maximum); returns the amount actually gained.
-    int raiseDefence(int points);
+    double damageMultiplier();
+
+    void addEffect(StatusEffect effect);
+
+    boolean isBlinded();
 
 }

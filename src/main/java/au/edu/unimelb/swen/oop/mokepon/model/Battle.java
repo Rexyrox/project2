@@ -17,8 +17,8 @@ public class Battle {
     private BattleState state = BattleState.IN_PROGRESS;
 
     public Battle(MokeponSpec playerSpec, MokeponSpec enemySpec, Randomiser random) {
-        this.player = new Battler(playerSpec);
-        this.enemy = new Battler(enemySpec);
+        this.player = new Battler(playerSpec, 1.0);
+        this.enemy = new Battler(enemySpec, 1.0);
         this.random = random;
         log.battleBegan(player.name(), enemy.name());
 
@@ -44,7 +44,8 @@ public class Battle {
         return state != BattleState.IN_PROGRESS;
     }
 
-    // Runs one full round: the player's chosen skill, then (if nobody fainted) the enemy's turn.
+    // Runs one full round: the player's skill, the enemy's turn, then lingering effects,
+    // stopping as soon as either Mokepon faints.
     public void playerUses(Skill skill) {
         if (isOver() || !player.canAfford(skill)) {
             return;
@@ -69,6 +70,25 @@ public class Battle {
         log.enemyUsed(enemy.name(), skill.name(), skill.use(enemy, player, random));
 
         if(player.hasFainted()) {
+            state = BattleState.PLAYER_LOST;
+            log.playerFainted(player.name());
+            return;
+        }
+        endOfRound();
+    }
+
+    // Lingering effects, after both regular turns. Enemy first; if that kills the enemy the
+    // player's effects are skipped, so both Mokepon can't faint in one round (spec 6.5.4.2).
+    private void endOfRound() {
+        log.effectEvents(enemy.endOfRound());
+        if (enemy.hasFainted()) {
+            state = BattleState.PLAYER_WON;
+            log.enemyFainted(enemy.name());
+            return;
+        }
+
+        log.effectEvents(player.endOfRound());
+        if (player.hasFainted()) {
             state = BattleState.PLAYER_LOST;
             log.playerFainted(player.name());
         }
