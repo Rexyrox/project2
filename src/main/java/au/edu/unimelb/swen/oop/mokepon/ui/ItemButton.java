@@ -8,7 +8,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
-
 public class ItemButton extends Button {
 
     private static final double IMAGE_SIZE = 32;

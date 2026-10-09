@@ -67,6 +67,7 @@ public class OverworldScreen extends Pane implements MoveListener {
     private final Map<Direction, Button> moveButtons = new EnumMap<>(Direction.class);
     private final EventHandler<KeyEvent> arrowKeys = this::useArrowKey;
 
+    // Set while an encounter or exit modal is showing, so the player can't move behind it.
     private boolean dialogOpen;
 
     public OverworldScreen(Assets assets, MapData map, GameSession session, GameActions actions,
@@ -175,9 +176,16 @@ public class OverworldScreen extends Pane implements MoveListener {
 
     private ImageView tintedSprite(String imagePath, String colour, Position position) {
         ImageView view = sprite(imagePath, position);
-        Blend tint = new Blend(BlendMode.SRC_ATOP);
-        tint.setTopInput(new ColorInput(0, 0, TILE_SIZE, TILE_SIZE, Color.web(colour)));
-        view.setEffect(tint);
+
+        // MULTIPLY tints the sprite with the data-file colour (spec 5.2.7), then SRC_ATOP clips
+        // the tint to the sprite's own pixels so its transparent background stays transparent.
+        Blend multiply = new Blend(BlendMode.MULTIPLY);
+        multiply.setTopInput(new ColorInput(0, 0, TILE_SIZE, TILE_SIZE, Color.web(colour)));
+
+        Blend clipToSprite = new Blend(BlendMode.SRC_ATOP);
+        clipToSprite.setTopInput(multiply);
+
+        view.setEffect(clipToSprite);
         return view;
     }
 
@@ -251,6 +259,7 @@ public class OverworldScreen extends Pane implements MoveListener {
         }
     }
 
+    // A Scene event filter sees arrow keys before the focused button can use them to move focus.
     private void listenForArrowKeys() {
         sceneProperty().addListener((property, previous, current) -> {
             if (previous != null) {
@@ -262,14 +271,12 @@ public class OverworldScreen extends Pane implements MoveListener {
         });
     }
 
-
     private static Label statName(String text) {
         Label label = new Label(text);
         label.setFont(Font.font("SansSerif", STAT_FONT_SIZE));
         label.setTextFill(Color.BLACK);
         return label;
     }
-
 
     private static Label statValue(String text) {
         Label label = new Label(text);

@@ -16,7 +16,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
-
 // Reads mokepon.game (a Java properties file) into GameData.
 public final class GameDataLoader {
 
@@ -101,7 +100,8 @@ public final class GameDataLoader {
 
     private static MapData readMap(PropertyReader reader) throws DataLoadException {
         List<List<Terrain>> tiles =
-                reader.indexed("map.tiles.", "", index -> tileRow(reader.text("map.tiles." + index)));
+                reader.indexed("map.tiles.", "",
+                        index -> tileRow(reader.text("map.tiles." + index)));
         return new MapData(
                 tiles,
                 tileImages(reader),

@@ -1,4 +1,3 @@
-
 package au.edu.unimelb.swen.oop.mokepon.skill;
 
 // A battle action a Mokepon can use against an opponent.
@@ -13,4 +12,3 @@ public interface Skill {
     // Applies the skill's effect to user/target and reports what happened, for the battle log.
     SkillOutcome use(Combatant user, Combatant target, Randomiser random);
 }
-

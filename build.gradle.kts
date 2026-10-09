@@ -44,23 +44,3 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
-
-val umlDoclet = configurations.create("umlDoclet")
-
-dependencies {
-    umlDoclet("nl.talsmasoftware:umldoclet:2.3.2")
-}
-
-tasks.register<Javadoc>("umlClassDiagram") {
-    description = "Generates a UML class diagram of the main source set using UMLDoclet"
-    group = "documentation"
-
-    source = sourceSets.main.get().allJava.matching { exclude("module-info.java") }
-    classpath = sourceSets.main.get().compileClasspath
-    setDestinationDir(layout.buildDirectory.dir("docs/uml").get().asFile)
-
-    options.doclet = "nl.talsmasoftware.umldoclet.UMLDoclet"
-    options.docletpath = umlDoclet.files.toList()
-    (options as CoreJavadocOptions).addStringOption("umlImageFormat", "SVG")
-    (options as CoreJavadocOptions).addStringOption("-add-modules", "javafx.controls,javafx.graphics,javafx.base")
-}

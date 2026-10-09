@@ -1,7 +1,5 @@
 package au.edu.unimelb.swen.oop.mokepon.skill;
 
-import java.util.Random;
-
 public final class Stun extends TargetedSkill {
 
     @Override

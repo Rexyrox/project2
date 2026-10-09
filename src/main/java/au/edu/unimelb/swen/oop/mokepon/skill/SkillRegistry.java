@@ -33,6 +33,4 @@ public final class SkillRegistry {
     private void register(Skill skill) {
         skillsByName.put(skill.name(), skill);
     }
-
 }
-

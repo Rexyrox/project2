@@ -1,6 +1,5 @@
 package au.edu.unimelb.swen.oop.mokepon.ui;
 
-
 import javafx.scene.image.Image;
 import javafx.scene.text.Font;
 
@@ -11,7 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-
 
 /*
  * Loads assets from the filesystem, relative to cwd.
@@ -54,7 +52,6 @@ public class Assets {
         return Path.of(relativePath).toUri().toString();
     }
 
-
     private static byte[] readAllBytes(String relativePath) {
         try {
             return Files.readAllBytes(Path.of(relativePath));
@@ -62,6 +59,4 @@ public class Assets {
             throw new UncheckedIOException("Could not read " + relativePath, cause);
         }
     }
-
-
 }

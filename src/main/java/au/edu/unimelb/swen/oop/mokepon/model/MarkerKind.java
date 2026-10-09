@@ -6,7 +6,6 @@ import au.edu.unimelb.swen.oop.mokepon.data.TerrainEffect;
 import au.edu.unimelb.swen.oop.mokepon.skill.Randomiser;
 import java.util.List;
 
-
 public enum MarkerKind {
     RANDOM {
         @Override
@@ -29,6 +28,9 @@ public enum MarkerKind {
 
     protected abstract boolean suits(MokeponSpec spec, Terrain terrain);
 
+    // Strong/weak markers pick from Mokepon with an advantage/disadvantage on this terrain
+    // (spec 5.6.2.3-5.6.2.4). If the data file has none that qualify, any Mokepon is used
+    // rather than leaving the marker without an enemy.
     public MokeponSpec chooseEnemy(List<MokeponSpec> all, Terrain terrain, Randomiser random) {
         List<MokeponSpec> candidates = all.stream().filter(spec -> suits(spec, terrain)).toList();
         List<MokeponSpec> pool = candidates.isEmpty() ? all : candidates;

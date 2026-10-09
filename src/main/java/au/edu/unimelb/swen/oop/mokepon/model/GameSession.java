@@ -71,7 +71,13 @@ public class GameSession {
         return map.contains(next) && map.terrainAt(next).isWalkable();
     }
 
+    // A marker takes priority over anything else on the tile. A mystery box doesn't end the move,
+    // so a box on the exit tile is collected and then the exit still triggers.
     public void move(Direction direction, MoveListener listener) {
+        if (!canMove(direction)) {
+            return;
+        }
+        // Remembered so Run away can return to the tile before the encounter (spec 4.1.1.3).
         previousPosition = position;
         position = position.moved(direction);
 
@@ -85,7 +91,6 @@ public class GameSession {
             mysteryBoxes.remove(box.get());
             inventory.add(box.get().type());
             listener.pickedUp(box.get().type());
-            return;
         }
         if (position.equals(map.exit().position())) {
             listener.reachedExit();

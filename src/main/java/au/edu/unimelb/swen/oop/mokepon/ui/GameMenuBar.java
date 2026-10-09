@@ -1,6 +1,6 @@
 package au.edu.unimelb.swen.oop.mokepon.ui;
 
-
+import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -9,14 +9,15 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 
-// The "Game" menu: Reset and Restart Battle (only enabled during a battle) and Exit.
+// The "Game" menu: Run away (only during an unfinished battle), Main menu and Exit (spec 4.1).
 public class GameMenuBar extends MenuBar {
 
-    public GameMenuBar(GameActions actions, ReadOnlyObjectProperty<ScreenState> screenState) {
+    public GameMenuBar(GameActions actions, ReadOnlyObjectProperty<ScreenState> screenState,
+                       ReadOnlyBooleanProperty battleInProgress) {
         MenuItem runAway = new MenuItem("Run away");
         runAway.setAccelerator(new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN));
         runAway.setOnAction(event -> actions.runAway());
-        runAway.disableProperty().bind(screenState.isNotEqualTo(ScreenState.BATTLE));
+        runAway.disableProperty().bind(battleInProgress.not());
 
         MenuItem mainMenu = new MenuItem("Main menu");
         mainMenu.setAccelerator(new KeyCodeCombination(KeyCode.B, KeyCombination.CONTROL_DOWN));

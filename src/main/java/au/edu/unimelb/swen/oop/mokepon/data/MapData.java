@@ -16,6 +16,7 @@ public record MapData(
         List<MysteryBox> mysteryBoxes,
         Exit exit) {
 
+    // Tiles are stored row by row, so y (the row) is looked up before x (the column).
     public Terrain terrainAt(Position position) {
         return tiles.get(position.y()).get(position.x());
     }

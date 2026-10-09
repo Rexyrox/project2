@@ -1,6 +1,6 @@
 package au.edu.unimelb.swen.oop.mokepon.skill;
 
-// Shared hit/damage math for skills that attack the target (Bite, Tackle); subclasses just supply
+// Shared hit/damage math for skills that attack the target (Bite, Tackle, Lance); subclasses supply
 // their multiplier, name and energy cost.
 public abstract class DamageSkill extends TargetedSkill {
     private static final int DAMAGE_NUMERATOR = 50;

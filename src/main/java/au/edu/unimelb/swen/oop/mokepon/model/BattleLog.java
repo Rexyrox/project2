@@ -21,7 +21,6 @@ public class BattleLog {
         return entries.toString();
     }
 
-    // The entry message shown when a battle starts.
     public void battleBegan(String playerName, String enemyName) {
         append("Player chose " + playerName + ". Began a fight against enemy " + enemyName + "!");
     }

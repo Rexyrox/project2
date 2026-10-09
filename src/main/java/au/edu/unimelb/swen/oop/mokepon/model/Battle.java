@@ -62,6 +62,7 @@ public class Battle {
 
         player.payEnergyCost(skill.energyCost());
         log.playerUsed(player.name(), skill.name(), skill.use(player, enemy, random));
+        player.turnTaken();
 
         if (enemy.hasFainted()) {
             state = BattleState.PLAYER_WON;
@@ -72,6 +73,8 @@ public class Battle {
         enemyTurn();
     }
 
+    // Items never miss and don't give the enemy a turn (spec 6.8.5, 6.8.7), so unlike playerUses
+    // there is no enemy turn or end-of-round processing here.
     public void playerUsesItem(ItemType item) {
         if (isOver() || !inventory.has(item)) {
             return;
@@ -86,8 +89,9 @@ public class Battle {
         Skill skill = affordableEnemySkill();
         enemy.payEnergyCost(skill.energyCost());
         log.enemyUsed(enemy.name(), skill.name(), skill.use(enemy, player, random));
+        enemy.turnTaken();
 
-        if(player.hasFainted()) {
+        if (player.hasFainted()) {
             state = BattleState.PLAYER_LOST;
             log.playerFainted(player.name());
             return;
@@ -127,6 +131,4 @@ public class Battle {
     private static double multiplierFor(MokeponSpec spec, Terrain terrain) {
         return spec.type().effectOn(terrain).statMultiplier();
     }
-
-
 }

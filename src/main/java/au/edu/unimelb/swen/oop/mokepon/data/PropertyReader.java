@@ -6,7 +6,6 @@ import java.util.Properties;
 
 final class PropertyReader {
 
-
     @FunctionalInterface
     interface IndexedReader<T> {
         T read(int index) throws DataLoadException;
@@ -34,6 +33,8 @@ final class PropertyReader {
         return Position.parse(text(key));
     }
 
+    // Reads prefix0suffix, prefix1suffix, ... until the first missing index, since numbered
+    // entries start at 0 with no gaps and their count isn't given (e.g. spec 5.2.4.2).
     <T> List<T> indexed(String prefix, String suffix, IndexedReader<T> reader)
             throws DataLoadException {
         List<T> entries = new ArrayList<>();

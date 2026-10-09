@@ -9,7 +9,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
-
 // An hp/energy progress bar with an optional "current / maximum" label overlaid on top.
 public class StatBar extends StackPane {
 

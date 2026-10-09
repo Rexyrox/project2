@@ -6,4 +6,3 @@ public enum ScreenState {
     OVERWORLD,
     BATTLE
 }
-

@@ -23,6 +23,8 @@ public class Modal extends StackPane {
     private final HBox buttons = new HBox(SPACING);
 
     public Modal(Assets assets, String heading, String... messages) {
+        // The overlay covers the whole screen, so it also swallows clicks meant for the screen
+        // behind it.
         setBackground(new Background(new BackgroundFill(OVERLAY, null, null)));
 
         Label title = new Label(heading);
@@ -37,6 +39,7 @@ public class Modal extends StackPane {
         dialog.getChildren().add(buttons);
         dialog.setAlignment(Pos.CENTER);
         dialog.setPadding(DIALOG_PADDING);
+        // Stops the StackPane stretching the dialog to fill the screen.
         dialog.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         dialog.getStyleClass().add("modal-dialog");
 

@@ -18,5 +18,4 @@ public interface Combatant {
     void addEffect(StatusEffect effect);
 
     boolean isBlinded();
-
 }

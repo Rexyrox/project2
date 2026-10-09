@@ -15,6 +15,8 @@ public final class Bleeding extends StatusEffect {
     }
 
     @Override
+    // Recalculated each round from the attacker's current strength, and truncated to an int by
+    // DamageSkill.damage (spec 6.5.4.1, 6.5.4.3).
     protected List<EffectEvent> onRoundEnd(Combatant owner) {
         int damage = DamageSkill.damage(STRENGTH_MULTIPLIER, attacker, owner);
         owner.takeDamage(damage);

@@ -24,4 +24,3 @@ public sealed interface SkillOutcome {
     // The target was blinded, so its targeted skills may miss for a few turns.
     record BlindApplied(String targetName) implements SkillOutcome {}
 }
-

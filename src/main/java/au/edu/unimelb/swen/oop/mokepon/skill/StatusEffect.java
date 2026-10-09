@@ -11,7 +11,18 @@ public abstract class StatusEffect {
         this.turnsRemaining = turns;
     }
 
+    // Effects that change how the owner acts count down after each of the owner's own turns, so
+    // they last the same number of turns whether applied before or after the owner acted.
+    public final void afterOwnerTurn() {
+        if (countsOwnerTurns()) {
+            turnsRemaining--;
+        }
+    }
+
     public final List<EffectEvent> endOfRound(Combatant owner) {
+        if (countsOwnerTurns()) {
+            return List.of();
+        }
         List<EffectEvent> events = new ArrayList<>(onRoundEnd(owner));
         turnsRemaining--;
         if (isFinished()) {
@@ -19,8 +30,13 @@ public abstract class StatusEffect {
         }
         return events;
     }
+
     public boolean isFinished() {
         return turnsRemaining <= 0;
+    }
+
+    protected boolean countsOwnerTurns() {
+        return false;
     }
 
     protected List<EffectEvent> onRoundEnd(Combatant owner) {

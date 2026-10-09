@@ -16,6 +16,4 @@ public final class Tackle extends DamageSkill {
     public int energyCost() {
         return 5;
     }
-
 }
-

@@ -2,16 +2,22 @@ package au.edu.unimelb.swen.oop.mokepon;
 
 import au.edu.unimelb.swen.oop.mokepon.data.GameData;
 import au.edu.unimelb.swen.oop.mokepon.data.MokeponSpec;
-import au.edu.unimelb.swen.oop.mokepon.data.Terrain;
-import au.edu.unimelb.swen.oop.mokepon.item.Inventory;
 import au.edu.unimelb.swen.oop.mokepon.model.Battle;
 import au.edu.unimelb.swen.oop.mokepon.model.Encounter;
 import au.edu.unimelb.swen.oop.mokepon.model.GameSession;
 import au.edu.unimelb.swen.oop.mokepon.skill.DefaultRandomiserSource;
 import au.edu.unimelb.swen.oop.mokepon.skill.Randomiser;
-import au.edu.unimelb.swen.oop.mokepon.ui.*;
+import au.edu.unimelb.swen.oop.mokepon.ui.Assets;
+import au.edu.unimelb.swen.oop.mokepon.ui.BattleScreen;
+import au.edu.unimelb.swen.oop.mokepon.ui.GameActions;
+import au.edu.unimelb.swen.oop.mokepon.ui.GameMenuBar;
+import au.edu.unimelb.swen.oop.mokepon.ui.OverworldScreen;
+import au.edu.unimelb.swen.oop.mokepon.ui.ScreenState;
+import au.edu.unimelb.swen.oop.mokepon.ui.SelectScreen;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Scene;
 import javafx.scene.layout.Background;
@@ -24,9 +30,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-
-// The main window: owns the current screen (Select or Battle) and the choices that carry
-// across screens (which Mokepon the player picked, and the randomly chosen enemy).
+// The main window: owns the current screen (Select, Overworld or Battle) and the GameSession
+// that carries the player's progress between them.
 public class GameWindow extends Stage implements GameActions {
 
     private static final double SCREEN_WIDTH = 1280;
@@ -38,12 +43,11 @@ public class GameWindow extends Stage implements GameActions {
     private final StackPane content = new StackPane();
     private final ObjectProperty<ScreenState> screenState =
             new SimpleObjectProperty<>(ScreenState.SELECT);
+    // False once a battle has a result, so Run away can't undo a win or a loss.
+    private final BooleanProperty battleInProgress = new SimpleBooleanProperty(false);
 
     private GameSession session;
     private Encounter currentEncounter;
-
-    private MokeponSpec playerMokepon;
-    private MokeponSpec enemyMokepon;
 
     public GameWindow(Assets assets, GameData data) {
         this.assets = assets;
@@ -56,7 +60,7 @@ public class GameWindow extends Stage implements GameActions {
         content.setBackground(background());
 
         BorderPane frame = new BorderPane();
-        frame.setTop(new GameMenuBar(this, screenState));
+        frame.setTop(new GameMenuBar(this, screenState, battleInProgress));
         frame.setCenter(content);
 
         setScene(new Scene(frame));
@@ -84,6 +88,11 @@ public class GameWindow extends Stage implements GameActions {
     public void runAway() {
         session.retreat();
         showOverworldScreen("");
+    }
+
+    @Override
+    public void battleEnded() {
+        battleInProgress.set(false);
     }
 
     @Override
@@ -120,6 +129,7 @@ public class GameWindow extends Stage implements GameActions {
         screen.setMaxSize(SCREEN_WIDTH, SCREEN_HEIGHT);
         content.getChildren().setAll(screen);
         screenState.set(newState);
+        battleInProgress.set(newState == ScreenState.BATTLE);
     }
 
     // bg.png stretched to fill the fixed game size, used behind every screen.
@@ -132,4 +142,3 @@ public class GameWindow extends Stage implements GameActions {
                 new BackgroundSize(SCREEN_WIDTH, SCREEN_HEIGHT, false, false, false, false)));
     }
 }
-

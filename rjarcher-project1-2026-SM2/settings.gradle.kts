@@ -1,1 +1,0 @@
-rootProject.name = "rjarcher-project1-2026-SM2"

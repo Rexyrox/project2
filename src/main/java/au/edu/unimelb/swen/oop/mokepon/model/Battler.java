@@ -26,6 +26,8 @@ public class Battler implements Combatant, ItemTarget {
 
     public Battler(MokeponSpec spec, double terrainMultiplier) {
         this.spec = spec;
+        // Terrain advantage/disadvantage scales every stat for this battle only, rounded and
+        // capped at the stat's legal maximum (spec 5.6.2.7.3-5.6.2.7.5).
         for (Stat stat : Stat.values()) {
             int adjusted = (int) Math.round(spec.base(stat) * terrainMultiplier);
             stats.put(stat, Math.min(adjusted, stat.maximum()));
@@ -63,7 +65,6 @@ public class Battler implements Combatant, ItemTarget {
         return currentHp == 0;
     }
 
-    // Whether there's enough current energy to pay this skill's cost.
     public boolean canAfford(Skill skill) {
         return currentEnergy >= skill.energyCost();
     }
@@ -93,6 +94,7 @@ public class Battler implements Combatant, ItemTarget {
 
     @Override
     public void addEffect(StatusEffect effect) {
+        // Re-applying an effect the Mokepon already has restarts it rather than stacking.
         effects.removeIf(existing -> existing.getClass() == effect.getClass());
         effects.add(effect);
     }
@@ -131,6 +133,14 @@ public class Battler implements Combatant, ItemTarget {
         currentHp = 1;
     }
 
+    // Called after this Mokepon uses a skill; see StatusEffect.afterOwnerTurn.
+    public void turnTaken() {
+        for (StatusEffect effect : effects) {
+            effect.afterOwnerTurn();
+        }
+        effects.removeIf(StatusEffect::isFinished);
+    }
+
     // Ticks every effect once, then drops any that have run out.
     public List<EffectEvent> endOfRound() {
         List<EffectEvent> events = new ArrayList<>();
@@ -144,5 +154,4 @@ public class Battler implements Combatant, ItemTarget {
     private static int clamp(int value, int lowest, int highest) {
         return Math.max(lowest, Math.min(highest, value));
     }
-
 }

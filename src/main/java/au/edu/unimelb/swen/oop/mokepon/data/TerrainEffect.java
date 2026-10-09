@@ -16,7 +16,7 @@ public enum TerrainEffect {
     public String description() {
         return description;
     }
-    
+
     public double statMultiplier() {
         return statMultiplier;
     }

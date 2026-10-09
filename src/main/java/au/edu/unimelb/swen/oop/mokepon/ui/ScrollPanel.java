@@ -8,7 +8,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 
-
 // A scroll.png background with arbitrary contents stacked on top, plus an optional fainted tint.
 public class ScrollPanel extends StackPane {
 

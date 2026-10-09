@@ -17,5 +17,3 @@ public final class Bite extends DamageSkill {
         return 1;
     }
 }
-
-

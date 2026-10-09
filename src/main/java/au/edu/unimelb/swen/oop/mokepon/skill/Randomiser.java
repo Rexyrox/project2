@@ -7,5 +7,4 @@ public interface Randomiser {
 
     // A random integer in [originInclusive, boundExclusive).
     int nextInt(int originInclusive, int boundExclusive);
-
 }

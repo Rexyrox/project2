@@ -15,5 +15,4 @@ public class DefaultRandomiserSource implements Randomiser {
     public int nextInt(int originInclusive, int boundExclusive) {
         return random.nextInt(originInclusive, boundExclusive);
     }
-
 }

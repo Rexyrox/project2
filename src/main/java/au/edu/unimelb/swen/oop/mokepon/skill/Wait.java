@@ -1,4 +1,3 @@
-
 package au.edu.unimelb.swen.oop.mokepon.skill;
 
 // Recovery skill: costs no energy (recovers some instead) and always succeeds; this is the
@@ -23,5 +22,4 @@ public final class Wait implements Skill {
     public SkillOutcome use(Combatant user, Combatant target, Randomiser random) {
         return new SkillOutcome.Rested(random.nextInt(0, REMARK_COUNT));
     }
-
 }

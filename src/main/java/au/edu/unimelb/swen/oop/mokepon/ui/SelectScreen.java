@@ -1,7 +1,6 @@
 package au.edu.unimelb.swen.oop.mokepon.ui;
 
 import au.edu.unimelb.swen.oop.mokepon.data.MokeponSpec;
-
 import au.edu.unimelb.swen.oop.mokepon.data.MokeponType;
 import au.edu.unimelb.swen.oop.mokepon.skill.Skill;
 import javafx.geometry.Insets;
@@ -14,7 +13,12 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
@@ -26,7 +30,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 // The Mokepon Select Screen: a list of Mokepon to choose from, a detail panel for the current
-// selection, and a button to move on to the Battle Screen.
+// selection, and a button to move on to the Overworld Screen.
 public class SelectScreen extends Pane {
 
     private static final String NO_SELECTION_NAME = "Select a Mokepon";
@@ -84,11 +88,12 @@ public class SelectScreen extends Pane {
         this.typeImages = typeImages;
         this.actions = actions;
         getChildren().addAll(heading(), mokeponList(specs), detailPanel());
-        selection.selectedToggleProperty().addListener((property, previous, current) -> showSelection());
+        selection.selectedToggleProperty()
+                .addListener((property, previous, current) -> showSelection());
     }
 
     // The currently selected Mokepon, or null if none has been picked yet.
-    public MokeponSpec selected() {
+    private MokeponSpec selected() {
         return selection.getSelectedToggle() == null
                 ? null
                 : (MokeponSpec) selection.getSelectedToggle().getUserData();
@@ -153,7 +158,7 @@ public class SelectScreen extends Pane {
     }
 
     // One list entry; toggling it (via the shared group) drives showSelection().
-    private ToggleButton listEntry (MokeponSpec spec) {
+    private ToggleButton listEntry(MokeponSpec spec) {
         ToggleButton entry = new ToggleButton(spec.name());
         entry.setToggleGroup(selection);
         entry.setUserData(spec);
@@ -243,9 +248,7 @@ public class SelectScreen extends Pane {
         return label;
     }
 
-
     private static DropShadow whiteOutline() {
         return new DropShadow(BlurType.ONE_PASS_BOX, Color.WHITE, 7, 1.0, 0, 0);
     }
-
 }

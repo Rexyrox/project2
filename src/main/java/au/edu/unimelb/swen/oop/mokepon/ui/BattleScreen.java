@@ -7,7 +7,6 @@ import au.edu.unimelb.swen.oop.mokepon.model.BattleState;
 import au.edu.unimelb.swen.oop.mokepon.skill.Skill;
 import au.edu.unimelb.swen.oop.mokepon.model.Battle;
 import au.edu.unimelb.swen.oop.mokepon.model.Battler;
-import au.edu.unimelb.swen.oop.mokepon.skill.Stat;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -99,7 +98,8 @@ public class BattleScreen extends Pane {
 
         List<Skill> skills = player.spec().skills();
         for (int index = 0; index < actionButtons.size(); index++) {
-            actionButtons.get(index).setDisable(battle.isOver() || !player.canAfford(skills.get(index)));
+            boolean usable = !battle.isOver() && player.canAfford(skills.get(index));
+            actionButtons.get(index).setDisable(!usable);
         }
 
         Inventory inventory = battle.inventory();
@@ -115,7 +115,6 @@ public class BattleScreen extends Pane {
         log.positionCaret(log.getLength());
         log.setScrollTop(Double.MAX_VALUE);
     }
-
 
     // Fires the action button matching a 1-4 digit key press, if it isn't disabled.
     private void useHotkey(KeyEvent event) {
@@ -153,7 +152,6 @@ public class BattleScreen extends Pane {
         });
     }
 
-
     // Builds the bottom-left player scroll: name, portrait, hp/energy bars and action buttons.
     private ScrollPanel playerPanel() {
         MokeponSpec spec = battle.player().spec();
@@ -161,7 +159,7 @@ public class BattleScreen extends Pane {
         VBox mokepon = new VBox(PANEL_SPACING, mokeponImage(spec), playerHp, playerEnergy);
         mokepon.setAlignment(Pos.CENTER);
 
-        HBox body = new HBox(PANEL_SPACING, mokepon, actions(spec));
+        HBox body = new HBox(PANEL_SPACING, mokepon, actionList(spec));
         body.setAlignment(Pos.CENTER);
 
         VBox panel = new VBox(PANEL_SPACING, nameHeading(spec.name()), body);
@@ -172,7 +170,6 @@ public class BattleScreen extends Pane {
         playerScroll.relocate(PLAYER_X, PLAYER_Y);
         return playerScroll;
     }
-
 
     // Builds the top-right enemy scroll: name, portrait and hp/energy bars (no numeric readout).
     private ScrollPanel enemyPanel() {
@@ -188,19 +185,8 @@ public class BattleScreen extends Pane {
         return enemyScroll;
     }
 
-
-    // Unused: fainted state is already driven by refresh() after every action.
-    public void setPlayerFainted(boolean fainted) {
-        playerScroll.setFainted(fainted);
-    }
-
-    // Unused: fainted state is already driven by refresh() after every action.
-    public void setEnemyFainted(boolean fainted) {
-        enemyScroll.setFainted(fainted);
-    }
-
     // The "Actions" heading plus one button per skill the player's Mokepon knows.
-    private VBox actions(MokeponSpec player) {
+    private VBox actionList(MokeponSpec player) {
         Label heading = new Label("Actions");
         heading.setFont(assets.gameFont(ACTIONS_HEADING_FONT_SIZE));
         heading.setTextFill(Color.BLACK);
@@ -252,7 +238,7 @@ public class BattleScreen extends Pane {
         return heading;
     }
 
-    private ImageView mokeponImage(MokeponSpec spec){
+    private ImageView mokeponImage(MokeponSpec spec) {
         ImageView image = new ImageView(assets.image(spec.imagePath()));
         image.setFitWidth(IMAGE_SIZE);
         image.setFitHeight(IMAGE_SIZE);
@@ -270,6 +256,9 @@ public class BattleScreen extends Pane {
     }
 
     private void showResultIfOver() {
+        if (battle.isOver()) {
+            actions.battleEnded();
+        }
         if (battle.state() == BattleState.PLAYER_WON) {
             new Modal(assets, "You Win")
                     .withButton("Back to it!", actions::battleWon)
@@ -281,5 +270,4 @@ public class BattleScreen extends Pane {
                     .showOver(this);
         }
     }
-
 }

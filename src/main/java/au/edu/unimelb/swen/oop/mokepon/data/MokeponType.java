@@ -26,4 +26,3 @@ public enum MokeponType {
         return TerrainEffect.NEUTRAL;
     }
 }
-

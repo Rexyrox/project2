@@ -41,7 +41,7 @@
     -fx-background-radius: 50;
     -fx-background-insets: 0;
     -fx-border-width: 0;
-    -fx-padding: 12 40 12 40;
+    -fx-padding: 12 16 12 16;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
 }

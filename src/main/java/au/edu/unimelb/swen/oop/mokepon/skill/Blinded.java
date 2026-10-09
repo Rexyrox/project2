@@ -9,6 +9,11 @@ public final class Blinded extends StatusEffect {
     }
 
     @Override
+    protected boolean countsOwnerTurns() {
+        return true;
+    }
+
+    @Override
     public boolean blinds() {
         return true;
     }

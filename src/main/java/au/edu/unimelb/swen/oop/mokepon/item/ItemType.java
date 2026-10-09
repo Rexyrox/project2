@@ -21,6 +21,8 @@ public enum ItemType {
     };
 
     private final String displayName;
+    // The suffix of this item's items.* image key, which doesn't always match the enum name
+    // (HEALTH is items.heal).
     private final String dataKey;
 
     ItemType(String displayName, String dataKey) {
