@@ -1,0 +1,383 @@
+<title>Mokepon Class Diagram</title>
+<meta name="description" content="UML class diagrams for the Mokepon JavaFX project, generated with UMLDoclet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f3f4f7;
+    --surface: #ffffff;
+    --surface-2: #eaecf0;
+    --border: #d9dce2;
+    --text: #1b2028;
+    --text-dim: #5b6472;
+    --text-faint: #8890a0;
+    --accent: #2f6690;
+    --accent-strong: #204a6b;
+    --accent-soft: #e4edf4;
+    --paper: #fbfbfa;
+    --paper-border: #d3d6db;
+    --shadow: 0 1px 2px rgba(20, 24, 32, 0.06), 0 8px 24px -12px rgba(20, 24, 32, 0.18);
+    --radius: 10px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10141b;
+      --surface: #171c25;
+      --surface-2: #1e2430;
+      --border: #2b3341;
+      --text: #e7eaf0;
+      --text-dim: #9aa5b6;
+      --text-faint: #6d7789;
+      --accent: #75aad2;
+      --accent-strong: #a6cbe8;
+      --accent-soft: #1c2a36;
+      --paper: #f6f7f5;
+      --paper-border: #c7cbd1;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 32px -14px rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #10141b;
+    --surface: #171c25;
+    --surface-2: #1e2430;
+    --border: #2b3341;
+    --text: #e7eaf0;
+    --text-dim: #9aa5b6;
+    --text-faint: #6d7789;
+    --accent: #75aad2;
+    --accent-strong: #a6cbe8;
+    --accent-soft: #1c2a36;
+    --paper: #f6f7f5;
+    --paper-border: #c7cbd1;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 32px -14px rgba(0, 0, 0, 0.6);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    line-height: 1.5;
+  }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 48px 28px 88px;
+  }
+
+  header.masthead {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+  }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12.5px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  h1 {
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 700;
+    font-size: clamp(28px, 4vw, 40px);
+    margin: 0;
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+
+  .lede {
+    max-width: 62ch;
+    color: var(--text-dim);
+    font-size: 15.5px;
+  }
+
+  .lede code {
+    font-family: "IBM Plex Mono", monospace;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 0.92em;
+    color: var(--text);
+  }
+
+  .statline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .stat {
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 7px 14px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .stat strong {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 15px;
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  section.block {
+    margin-bottom: 52px;
+  }
+
+  .block-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+
+  .block-head h2 {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 19px;
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .block-head .hint {
+    font-size: 12.5px;
+    color: var(--text-faint);
+    font-family: "IBM Plex Mono", monospace;
+  }
+
+  .block-desc {
+    color: var(--text-dim);
+    font-size: 14.5px;
+    max-width: 68ch;
+    margin: 0 0 16px;
+  }
+
+  .plate {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .plate-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface-2);
+  }
+
+  .plate-bar .name {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .plate-bar .name b {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .plate-bar a {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    color: var(--accent);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 9px;
+    background: var(--surface);
+    white-space: nowrap;
+  }
+
+  .plate-bar a:hover,
+  .plate-bar a:focus-visible {
+    border-color: var(--accent);
+    color: var(--accent-strong);
+  }
+
+  .sheet {
+    background: var(--paper);
+    overflow-x: auto;
+    padding: 20px;
+  }
+
+  .sheet img {
+    display: block;
+    height: 340px;
+    width: auto;
+    max-width: none;
+  }
+
+  .sheet.tall img { height: 460px; }
+  .sheet.short img { height: 220px; }
+
+  .overview .sheet img {
+    height: 300px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .package-note {
+    padding: 12px 16px;
+    font-size: 13.5px;
+    color: var(--text-dim);
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  footer {
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-size: 12.5px;
+    color: var(--text-faint);
+    font-family: "IBM Plex Mono", monospace;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+  }
+
+  a { color: var(--accent); }
+
+  ::selection { background: var(--accent-soft); }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">UMLDoclet 2.3.2 &middot; javadoc doclet output</div>
+    <h1>Mokepon &mdash; class diagram</h1>
+    <p class="lede">
+      Reverse-engineered directly from <code>src/main/java</code> by running the
+      <code>umlClassDiagram</code> Gradle task against
+      <a href="https://github.com/talsma-ict/umldoclet" target="_blank" rel="noopener">talsma-ict/umldoclet</a>,
+      a javadoc doclet that renders PlantUML diagrams from real compiled types &mdash;
+      nothing here was hand-drawn.
+    </p>
+    <div class="statline">
+      <span class="stat"><strong>5</strong>&nbsp;packages</span>
+      <span class="stat"><strong>27</strong>&nbsp;types</span>
+      <span class="stat"><strong>module</strong>&nbsp;au.edu.unimelb.swen.oop.mokepon</span>
+      <span class="stat"><strong>JDK 25</strong>&nbsp;toolchain</span>
+    </div>
+  </header>
+
+  <section class="block overview">
+    <div class="block-head">
+      <h2>System overview</h2>
+      <span class="hint">package-dependencies.svg</span>
+    </div>
+    <p class="block-desc">
+      Every package the game touches, including the JavaFX modules it depends on.
+      <b style="color:var(--text)"><code style="font-family:'IBM Plex Mono',monospace">ui</code></b>
+      is the hub &mdash; it's the only package that talks to JavaFX directly, keeping
+      <code style="font-family:'IBM Plex Mono',monospace">model</code> and
+      <code style="font-family:'IBM Plex Mono',monospace">skill</code> free of any UI toolkit dependency.
+    </p>
+    <div class="plate">
+      <div class="plate-bar">
+        <span class="name">whole-project package graph</span>
+        <a href="overview.svg" target="_blank" rel="noopener">Open full size &#8599;</a>
+      </div>
+      <div class="sheet"><img src="overview.svg" alt="Package dependency diagram for the Mokepon project"></div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <h2>Package plates</h2>
+      <span class="hint">one diagram per package</span>
+    </div>
+    <p class="block-desc">
+      Each plate shows a package's own types plus the neighbouring types they
+      directly reference &mdash; fields, return types, and supertypes &mdash; the same
+      scoping UMLDoclet uses for its generated javadoc site.
+    </p>
+
+    <div class="grid">
+
+      <div class="plate">
+        <div class="plate-bar">
+          <span class="name"><b>model</b> &mdash; battle domain logic</span>
+          <a href="model.svg" target="_blank" rel="noopener">Open full size &#8599;</a>
+        </div>
+        <div class="sheet tall"><img src="model.svg" alt="Class diagram for the model package: Battle, BattleLog, Battler, BattleState"></div>
+        <div class="package-note">Battle, BattleLog, Battler, BattleState &mdash; the turn engine, independent of both JavaFX and the skill implementations it calls into.</div>
+      </div>
+
+      <div class="plate">
+        <div class="plate-bar">
+          <span class="name"><b>skill</b> &mdash; combat moves</span>
+          <a href="skill.svg" target="_blank" rel="noopener">Open full size &#8599;</a>
+        </div>
+        <div class="sheet short"><img src="skill.svg" alt="Class diagram for the skill package: Skill, DamageSkill, Bite, Tackle, Bunker, Wait, Combatant, Randomiser, SkillOutcome, SkillRegistry"></div>
+        <div class="package-note">Skill is the interface every move implements; DamageSkill is the shared base for Bite and Tackle. SkillOutcome is a sealed interface with four record cases &mdash; Hit, Missed, DefenceRaised, Rested.</div>
+      </div>
+
+      <div class="plate">
+        <div class="plate-bar">
+          <span class="name"><b>ui</b> &mdash; JavaFX screens</span>
+          <a href="ui.svg" target="_blank" rel="noopener">Open full size &#8599;</a>
+        </div>
+        <div class="sheet short"><img src="ui.svg" alt="Class diagram for the ui package: BattleScreen, SelectScreen, GameMenuBar, ScrollPanel, StatBar, Assets, GameActions, ScreenState"></div>
+        <div class="package-note">BattleScreen and SelectScreen are the two screens; GameActions is the callback interface GameWindow implements to drive them.</div>
+      </div>
+
+      <div class="plate">
+        <div class="plate-bar">
+          <span class="name"><b>data</b> &mdash; loading .game files</span>
+          <a href="data.svg" target="_blank" rel="noopener">Open full size &#8599;</a>
+        </div>
+        <div class="sheet"><img src="data.svg" alt="Class diagram for the data package: GameDataLoader, MokeponSpec, DataLoadException"></div>
+        <div class="package-note">GameDataLoader parses a <code style="font-family:'IBM Plex Mono',monospace">mokepon.game</code> file into MokeponSpec records, throwing DataLoadException on malformed input.</div>
+      </div>
+
+      <div class="plate">
+        <div class="plate-bar">
+          <span class="name"><b>mokepon</b> &mdash; entry point</span>
+          <a href="root.svg" target="_blank" rel="noopener">Open full size &#8599;</a>
+        </div>
+        <div class="sheet"><img src="root.svg" alt="Class diagram for the root package: Main and GameWindow"></div>
+        <div class="package-note">Main is the JavaFX Application; GameWindow is the top-level Stage that owns screen-switching.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    <span>Generated 2026-09-14</span>
+    <span>&middot;</span>
+    <span>Gradle task: <code style="font-family:inherit">./gradlew umlClassDiagram</code></span>
+    <span>&middot;</span>
+    <span>Output: <code style="font-family:inherit">build/docs/uml/</code></span>
+  </footer>
+
+</div>
