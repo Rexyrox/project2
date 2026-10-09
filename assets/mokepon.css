@@ -1,0 +1,65 @@
+.mokepon-list-entry {
+    -fx-background-color: rgba(211, 211, 211, 0.5);
+    -fx-background-radius: 25;
+    -fx-background-insets: 0;
+    -fx-border-width: 0;
+    -fx-padding: 10 20 10 20;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.mokepon-list-entry:selected,
+.mokepon-list-entry:focused:selected {
+    -fx-background-color: rgba(211, 211, 211, 0.75);
+}
+
+.mokepon-list-entry:focused {
+    -fx-background-color: rgba(211, 211, 211, 0.5);
+}
+
+.choose-button {
+    -fx-background-color: rgba(211, 211, 211, 0.5);
+    -fx-background-radius: 20;
+    -fx-background-insets: 0;
+    -fx-border-width: 0;
+    -fx-padding: 25 30 25 30;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.choose-button:disabled {
+    -fx-background-color: rgba(211, 211, 211, 0.2);
+    -fx-opacity: 1.0;
+}
+
+.choose-button:pressed {
+    -fx-background-color: rgba(211, 211, 211, 0.75);
+}
+
+.action-button {
+    -fx-background-color: rgba(211, 211, 211, 0.5);
+    -fx-background-radius: 50;
+    -fx-background-insets: 0;
+    -fx-border-width: 0;
+    -fx-padding: 12 40 12 40;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.action-button:disabled {
+    -fx-background-color: rgba(211, 211, 211, 0.2);
+    -fx-opacity: 1.0;
+}
+
+.action-button:pressed {
+    -fx-background-color: rgba(211, 211, 211, 0.75);
+}
+
+.battle-log {
+    -fx-font-family: "Monospaced";
+    -fx-font-size: 11;
+}
+
+.battle-log .content {
+    -fx-background-color: white;
+}
