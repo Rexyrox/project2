@@ -1,5 +1,6 @@
 package au.edu.unimelb.swen.oop.mokepon;
 
+import au.edu.unimelb.swen.oop.mokepon.data.GameData;
 import au.edu.unimelb.swen.oop.mokepon.data.MokeponSpec;
 import au.edu.unimelb.swen.oop.mokepon.item.Inventory;
 import au.edu.unimelb.swen.oop.mokepon.ui.*;
@@ -16,7 +17,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import java.util.List;
 import java.util.Random;
 
 
@@ -28,7 +28,7 @@ public class GameWindow extends Stage implements GameActions {
     private static final double SCREEN_HEIGHT = 768;
 
     private final Assets assets;
-    private final List<MokeponSpec> mokepon;
+    private final GameData data;
     private final StackPane content = new StackPane();
     private Inventory inventory = new Inventory();
     private final Random random = new Random();
@@ -38,9 +38,9 @@ public class GameWindow extends Stage implements GameActions {
     private MokeponSpec playerMokepon;
     private MokeponSpec enemyMokepon;
 
-    public GameWindow(Assets assets, List<MokeponSpec> mokepon) {
+    public GameWindow(Assets assets, GameData data) {
         this.assets = assets;
-        this.mokepon = mokepon;
+        this.data = data;
 
         setTitle("Mokepon");
         setResizable(false);
@@ -63,7 +63,7 @@ public class GameWindow extends Stage implements GameActions {
     @Override
     public void chooseMokepon(MokeponSpec player) {
         playerMokepon = player;
-        enemyMokepon = mokepon.get(random.nextInt(mokepon.size()));
+        enemyMokepon = data.mokepon().get(random.nextInt(data.mokepon().size()));
         showBattleScreen();
     }
 
@@ -90,7 +90,7 @@ public class GameWindow extends Stage implements GameActions {
     }
 
     private void showSelectScreen() {
-        showScreen(new SelectScreen(assets, mokepon, this), ScreenState.SELECT);
+        showScreen(new SelectScreen(assets, data.mokepon(), this), ScreenState.SELECT);
     }
 
     private void showBattleScreen() {

@@ -1,6 +1,7 @@
 package au.edu.unimelb.swen.oop.mokepon;
 
 import au.edu.unimelb.swen.oop.mokepon.data.DataLoadException;
+import au.edu.unimelb.swen.oop.mokepon.data.GameData;
 import au.edu.unimelb.swen.oop.mokepon.data.GameDataLoader;
 import au.edu.unimelb.swen.oop.mokepon.data.MokeponSpec;
 import au.edu.unimelb.swen.oop.mokepon.skill.SkillRegistry;
@@ -31,15 +32,15 @@ public class Main extends Application {
             return;
         }
 
-        List<MokeponSpec> mokepon;
+        GameData data;
         try {
-            mokepon = new GameDataLoader(new SkillRegistry()).load(Path.of(dataArgument.get()));
-        } catch (DataLoadException | RuntimeException cause) {
+            data = new GameDataLoader(new SkillRegistry()).load(Path.of(dataArgument.get()));
+        } catch (DataLoadException cause) {
             System.out.println("Error loading " + dataArgument.get());
             Platform.exit();
             return;
         }
-        new GameWindow(new Assets(), mokepon).show();
+        new GameWindow(new Assets(), data).show();
     }
 
     // Unused; superseded by dataArgument() below.
