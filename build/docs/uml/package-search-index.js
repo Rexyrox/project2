@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html","k":"18"},{"l":"au.edu.unimelb.swen.oop.mokepon"},{"l":"au.edu.unimelb.swen.oop.mokepon.data"},{"l":"au.edu.unimelb.swen.oop.mokepon.model"},{"l":"au.edu.unimelb.swen.oop.mokepon.skill"},{"l":"au.edu.unimelb.swen.oop.mokepon.ui"}];updateSearchResults();
