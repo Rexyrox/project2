@@ -1,6 +1,7 @@
 package au.edu.unimelb.swen.oop.mokepon;
 
 import au.edu.unimelb.swen.oop.mokepon.data.MokeponSpec;
+import au.edu.unimelb.swen.oop.mokepon.item.Inventory;
 import au.edu.unimelb.swen.oop.mokepon.ui.*;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
@@ -29,6 +30,7 @@ public class GameWindow extends Stage implements GameActions {
     private final Assets assets;
     private final List<MokeponSpec> mokepon;
     private final StackPane content = new StackPane();
+    private Inventory inventory = new Inventory();
     private final Random random = new Random();
     private final ObjectProperty<ScreenState> screenState =
             new SimpleObjectProperty<>(ScreenState.SELECT);
@@ -70,6 +72,7 @@ public class GameWindow extends Stage implements GameActions {
     public void reset() {
         playerMokepon = null;
         enemyMokepon = null;
+        inventory = new Inventory();
         showSelectScreen();
     }
 
@@ -91,7 +94,8 @@ public class GameWindow extends Stage implements GameActions {
     }
 
     private void showBattleScreen() {
-        showScreen(new BattleScreen(assets, playerMokepon, enemyMokepon), ScreenState.BATTLE);
+        showScreen(new BattleScreen(assets, playerMokepon, enemyMokepon, inventory),
+                ScreenState.BATTLE);
     }
 
     // Swaps in a new screen at the fixed game size and records which screen is now showing.

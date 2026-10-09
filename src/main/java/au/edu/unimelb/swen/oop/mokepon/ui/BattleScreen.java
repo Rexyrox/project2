@@ -1,6 +1,7 @@
 package au.edu.unimelb.swen.oop.mokepon.ui;
 
 import au.edu.unimelb.swen.oop.mokepon.data.MokeponSpec;
+import au.edu.unimelb.swen.oop.mokepon.item.Inventory;
 import au.edu.unimelb.swen.oop.mokepon.skill.Skill;
 import au.edu.unimelb.swen.oop.mokepon.model.Battle;
 import au.edu.unimelb.swen.oop.mokepon.model.Battler;
@@ -68,9 +69,9 @@ public class BattleScreen extends Pane {
     private ScrollPanel playerScroll;
     private ScrollPanel enemyScroll;
 
-    public BattleScreen(Assets assets, MokeponSpec player, MokeponSpec enemy) {
+    public BattleScreen(Assets assets, MokeponSpec player, MokeponSpec enemy, Inventory inventory) {
         this.assets = assets;
-        this.battle = new Battle(player, enemy, new DefaultRandomiserSource());
+        this.battle = new Battle(player, enemy, inventory, new DefaultRandomiserSource());
 
         getChildren().addAll(playerPanel(), enemyPanel(), battleLog());
         listenForHotkeys();

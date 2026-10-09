@@ -1,6 +1,7 @@
 package au.edu.unimelb.swen.oop.mokepon.model;
 
 import au.edu.unimelb.swen.oop.mokepon.data.MokeponSpec;
+import au.edu.unimelb.swen.oop.mokepon.item.ItemTarget;
 import au.edu.unimelb.swen.oop.mokepon.skill.Combatant;
 import au.edu.unimelb.swen.oop.mokepon.skill.EffectEvent;
 import au.edu.unimelb.swen.oop.mokepon.skill.Skill;
@@ -14,7 +15,7 @@ import java.util.Map;
 
 // One Mokepon's mutable state during a Battle: hp/energy/defence/accuracy/dodge/strength
 // layered over its fixed spec.
-public class Battler implements Combatant {
+public class Battler implements Combatant, ItemTarget {
 
     private final MokeponSpec spec;
 
@@ -113,6 +114,21 @@ public class Battler implements Combatant {
             multiplier *= effect.damageMultiplier();
         }
         return multiplier;
+    }
+
+    @Override
+    public void restoreHp() {
+        currentHp = maxHp();
+    }
+
+    @Override
+    public void restoreEnergy() {
+        currentEnergy = maxEnergy();
+    }
+
+    @Override
+    public void reduceHpToOne() {
+        currentHp = 1;
     }
 
     // Ticks every effect once, then drops any that have run out.

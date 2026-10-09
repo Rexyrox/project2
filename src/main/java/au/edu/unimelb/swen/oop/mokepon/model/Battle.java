@@ -1,6 +1,8 @@
 package au.edu.unimelb.swen.oop.mokepon.model;
 
 import au.edu.unimelb.swen.oop.mokepon.data.MokeponSpec;
+import au.edu.unimelb.swen.oop.mokepon.item.Inventory;
+import au.edu.unimelb.swen.oop.mokepon.item.ItemType;
 import au.edu.unimelb.swen.oop.mokepon.skill.Randomiser;
 import au.edu.unimelb.swen.oop.mokepon.skill.Skill;
 
@@ -11,14 +13,17 @@ import java.util.List;
 public class Battle {
     private final Battler player;
     private final Battler enemy;
+    private final Inventory inventory;
     private final Randomiser random;
     private final BattleLog log = new BattleLog();
 
     private BattleState state = BattleState.IN_PROGRESS;
 
-    public Battle(MokeponSpec playerSpec, MokeponSpec enemySpec, Randomiser random) {
+    public Battle(MokeponSpec playerSpec, MokeponSpec enemySpec, Inventory inventory,
+                 Randomiser random) {
         this.player = new Battler(playerSpec, 1.0);
         this.enemy = new Battler(enemySpec, 1.0);
+        this.inventory = inventory;
         this.random = random;
         log.battleBegan(player.name(), enemy.name());
 
@@ -30,6 +35,10 @@ public class Battle {
 
     public Battler enemy() {
         return enemy;
+    }
+
+    public Inventory inventory() {
+        return inventory;
     }
 
     public BattleState state() {
@@ -61,6 +70,15 @@ public class Battle {
         }
 
         enemyTurn();
+    }
+
+    public void playerUsesItem(ItemType item) {
+        if (isOver() || !inventory.has(item)) {
+            return;
+        }
+        inventory.use(item);
+        item.apply(player, enemy);
+        log.itemUsed(item, player.name(), enemy.name());
     }
 
     // Picks and plays an affordable skill for the enemy, ending the battle if the player faints.
@@ -105,5 +123,6 @@ public class Battle {
         // Relies on every Mokepon having a free or energy-recovering skill, so this is never empty.
         return affordable.get(random.nextInt(0, affordable.size()));
     }
+
 
 }

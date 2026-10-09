@@ -1,5 +1,6 @@
 package au.edu.unimelb.swen.oop.mokepon.model;
 
+import au.edu.unimelb.swen.oop.mokepon.item.ItemType;
 import au.edu.unimelb.swen.oop.mokepon.skill.EffectEvent;
 import au.edu.unimelb.swen.oop.mokepon.skill.SkillOutcome;
 
@@ -88,6 +89,18 @@ public class BattleLog {
                     bleed.targetName() + " took " + bleed.damage() + " bleeding damage!";
             case EffectEvent.BleedingStopped ignored -> "The bleeding stopped.";
         };
+    }
+
+    public void itemUsed(ItemType item, String playerName, String enemyName) {
+        append("");
+        append(switch (item) {
+            case HEALTH -> "You used your " + item.displayName() + " on " + playerName
+                    + ". It healed you to max hp!";
+            case COFFEE -> "You used your " + item.displayName() + " on " + playerName
+                    + ". It restored all your energy!";
+            case POISON -> "You used your " + item.displayName() + " on " + enemyName
+                    + ". It devastated them!";
+        });
     }
 
     // Appends a line, inserting a newline first if the log already has content.
