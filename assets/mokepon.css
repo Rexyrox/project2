@@ -63,3 +63,22 @@
 .battle-log .content {
     -fx-background-color: white;
 }
+
+.item-button {
+    -fx-background-color: rgba(211, 211, 211, 0.5);
+    -fx-background-radius: 30;
+    -fx-background-insets: 0;
+    -fx-border-width: 0;
+    -fx-padding: 10 14 10 14;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.item-button:disabled {
+    -fx-background-color: rgba(211, 211, 211, 0.2);
+    -fx-opacity: 1.0;
+}
+
+.item-button:pressed {
+    -fx-background-color: rgba(211, 211, 211, 0.75);
+}

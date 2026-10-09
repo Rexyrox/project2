@@ -3,6 +3,9 @@ package au.edu.unimelb.swen.oop.mokepon;
 import au.edu.unimelb.swen.oop.mokepon.data.GameData;
 import au.edu.unimelb.swen.oop.mokepon.data.MokeponSpec;
 import au.edu.unimelb.swen.oop.mokepon.item.Inventory;
+import au.edu.unimelb.swen.oop.mokepon.model.Battle;
+import au.edu.unimelb.swen.oop.mokepon.skill.DefaultRandomiserSource;
+import au.edu.unimelb.swen.oop.mokepon.skill.Randomiser;
 import au.edu.unimelb.swen.oop.mokepon.ui.*;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
@@ -17,7 +20,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import java.util.Random;
 
 
 // The main window: owns the current screen (Select or Battle) and the choices that carry
@@ -31,7 +33,7 @@ public class GameWindow extends Stage implements GameActions {
     private final GameData data;
     private final StackPane content = new StackPane();
     private Inventory inventory = new Inventory();
-    private final Random random = new Random();
+    private final Randomiser randomiser = new DefaultRandomiserSource();
     private final ObjectProperty<ScreenState> screenState =
             new SimpleObjectProperty<>(ScreenState.SELECT);
 
@@ -63,7 +65,7 @@ public class GameWindow extends Stage implements GameActions {
     @Override
     public void chooseMokepon(MokeponSpec player) {
         playerMokepon = player;
-        enemyMokepon = data.mokepon().get(random.nextInt(data.mokepon().size()));
+        enemyMokepon = data.mokepon().get(randomiser.nextInt(0, data.mokepon().size()));
         showBattleScreen();
     }
 
@@ -94,8 +96,8 @@ public class GameWindow extends Stage implements GameActions {
     }
 
     private void showBattleScreen() {
-        showScreen(new BattleScreen(assets, playerMokepon, enemyMokepon, inventory),
-                ScreenState.BATTLE);
+        Battle battle = new Battle(playerMokepon, enemyMokepon, inventory, randomiser);
+        showScreen(new BattleScreen(assets, battle, data.itemImages()), ScreenState.BATTLE);
     }
 
     // Swaps in a new screen at the fixed game size and records which screen is now showing.

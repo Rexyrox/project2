@@ -2,10 +2,10 @@ package au.edu.unimelb.swen.oop.mokepon.ui;
 
 import au.edu.unimelb.swen.oop.mokepon.data.MokeponSpec;
 import au.edu.unimelb.swen.oop.mokepon.item.Inventory;
+import au.edu.unimelb.swen.oop.mokepon.item.ItemType;
 import au.edu.unimelb.swen.oop.mokepon.skill.Skill;
 import au.edu.unimelb.swen.oop.mokepon.model.Battle;
 import au.edu.unimelb.swen.oop.mokepon.model.Battler;
-import au.edu.unimelb.swen.oop.mokepon.skill.DefaultRandomiserSource;
 import au.edu.unimelb.swen.oop.mokepon.skill.Stat;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -18,12 +18,12 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 // The battle screen: owns a Battle for the two chosen Mokepon and renders its current state,
 // re-drawing after every player action.
@@ -55,6 +55,10 @@ public class BattleScreen extends Pane {
     private static final double LOG_WIDTH = 675;
     private static final double LOG_HEIGHT = 250;
 
+    private static final double ITEM_BAR_X = 190;
+    private static final double ITEM_BAR_Y = 172;
+    private static final double ITEM_SPACING = 8;
+
     private final Assets assets;
     private final Battle battle;
 
@@ -63,20 +67,20 @@ public class BattleScreen extends Pane {
     private final StatBar enemyHp = new StatBar(BAR_WIDTH, BAR_HEIGHT, Color.LIMEGREEN, false);
     private final StatBar enemyEnergy = new StatBar(BAR_WIDTH, BAR_HEIGHT, Color.ROYALBLUE, false);
     private final TextArea log = new TextArea();
+    private final List<ItemButton> itemButtons = new ArrayList<>();
     private final List<Button> actionButtons = new ArrayList<>();
     private final EventHandler<KeyEvent> hotkeys = this::useHotkey;
 
     private ScrollPanel playerScroll;
     private ScrollPanel enemyScroll;
 
-    public BattleScreen(Assets assets, MokeponSpec player, MokeponSpec enemy, Inventory inventory) {
+    public BattleScreen(Assets assets, Battle battle, Map<ItemType, String> itemImages) {
         this.assets = assets;
-        this.battle = new Battle(player, enemy, inventory, new DefaultRandomiserSource());
+        this.battle = battle;
 
-        getChildren().addAll(playerPanel(), enemyPanel(), battleLog());
+        getChildren().addAll(playerPanel(), enemyPanel(), battleLog(), itemBar(itemImages));
         listenForHotkeys();
         refresh();
-
     }
 
     // Re-reads the Battle's current state into every on-screen element.
@@ -92,6 +96,12 @@ public class BattleScreen extends Pane {
         List<Skill> skills = player.spec().skills();
         for (int index = 0; index < actionButtons.size(); index++) {
             actionButtons.get(index).setDisable(battle.isOver() || !player.canAfford(skills.get(index)));
+        }
+
+        Inventory inventory = battle.inventory();
+        for (ItemButton button : itemButtons) {
+            ItemType type = button.type();
+            button.update(inventory.count(type), !battle.isOver() && inventory.has(type));
         }
 
         playerScroll.setFainted(player.hasFainted());
@@ -197,6 +207,21 @@ public class BattleScreen extends Pane {
             list.getChildren().add(actionButton(skill));
         }
         return list;
+    }
+
+    private HBox itemBar(Map<ItemType, String> itemImages) {
+        HBox bar = new HBox(ITEM_SPACING);
+        for (ItemType type : ItemType.values()) {
+            ItemButton button = new ItemButton(assets, type, itemImages.get(type));
+            button.setOnAction(event -> {
+                battle.playerUsesItem(type);
+                refresh();
+            });
+            itemButtons.add(button);
+            bar.getChildren().add(button);
+        }
+        bar.relocate(ITEM_BAR_X, ITEM_BAR_Y);
+        return bar;
     }
 
     // A single skill button; clicking it plays the skill and refreshes the screen.
